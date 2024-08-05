@@ -5,6 +5,7 @@ import {Avatar, Card, Chip, Container, List, ListItem, Typography} from '@mui/ma
 import { ListItemContent, ListItemDecorator } from '@mui/joy';
 import CreateContact from '../components/CreateContact';
 import { NavLink } from 'react-router-dom';
+import axios from 'axios';
 
 
 const Contacts = () => {
@@ -16,18 +17,13 @@ const Contacts = () => {
   useEffect(() => {
     async function getData() {
       try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Something is broken!')
-        const contacts = await response.json();
-        console.log(contacts.resources)
-        setData(contacts.resources);
-        // console.log(contacts.resources[28].fields.email[0].value)
-        console.log(contacts.resources[28].fields['first name'][0].value)
-        // console.log(contacts.resources[28])
+        const response = await axios.get(url);
+        if (!response.status) throw new Error('Something is broken!')
+        console.log(response.data.resources)
+        setData(response.data.resources);
       } catch(err) {
         console.log(err)
       }
-
     }
     getData()
   },[])
@@ -53,10 +49,8 @@ const Contacts = () => {
                   </ListItemDecorator>
                   <ListItemContent>
                     <Typography level="title-lg">
-                      {
-                        (item.fields['first name']) ? (item.fields['first name'][0].value + ' ') : ''
-                        (item.fields['last name']) ? (item.fields['last name'][0].value) : ''
-                      }
+                      {(item.fields['first name']) ? (item.fields['first name'][0].value + ' ') : ''}
+                      {(item.fields['last name']) ? (item.fields['last name'][0].value) : ''}
                     </Typography>
                     <Typography level="body-md ">
                       Email: {(item.fields.email) ? (item.fields.email[0].value) : 'no email'}
@@ -74,7 +68,7 @@ const Contacts = () => {
             </List>
           </Grid>
           <Grid item xs={4} sx={{order: 0}}>
-            <Typography level="h1">Create Contact</Typography>
+            <Typography level="h2">Create Contact</Typography>
             <CreateContact />
           </Grid>
         </Grid>
